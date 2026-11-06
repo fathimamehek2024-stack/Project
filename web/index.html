@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Groww SIP Retention Research Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Top App Bar -->
+  <header class="app-header">
+    <div class="brand-container">
+      <div class="brand-logo-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+      </div>
+      <span class="brand-title">Groww SIP Retention Research</span>
+    </div>
+    <div class="header-user" title="Audited Researcher Account">G</div>
+  </header>
+
+  <!-- 3-Column Layout Container -->
+  <div class="layout-container">
+    
+    <!-- Left Navigation Sidebar -->
+    <aside class="left-sidebar">
+      <div>
+        <div class="nav-section-title">Navigation / Modules</div>
+        <ul class="nav-list">
+          <li>
+            <a href="#overview" class="nav-item active">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              Overview
+            </a>
+          </li>
+          <li>
+            <a href="#themes" class="nav-item">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              Customer Themes
+            </a>
+          </li>
+          <li>
+            <a href="#journey" class="nav-item">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              Where Retention Breaks
+            </a>
+          </li>
+          <li>
+            <a href="#opportunities" class="nav-item">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              Opportunities
+            </a>
+          </li>
+          <li>
+            <a href="#methodology" class="nav-item">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Methodology
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Bottom Database Status -->
+      <div class="sidebar-status-card">
+        <div class="status-badge">
+          <span class="status-indicator-dot"></span>
+          Database Status
+        </div>
+        <div>Audited 203 mutual fund and platform feedback records. 0/7 stock SIPs included.</div>
+      </div>
+    </aside>
+
+    <!-- Center Main Content -->
+    <main class="center-content">
+      
+      <!-- Top Title Group -->
+      <section id="overview" class="page-header-group">
+        <span class="report-tag-pill">Synthesis Report</span>
+        <h1 class="page-title">Groww SIP Retention Research</h1>
+        <p class="page-subtitle">Understanding why first-time mutual fund investors continue, pause, reduce or stop their Systematic Investment Plans (SIPs)</p>
+      </section>
+
+      <!-- Stat Cards Row -->
+      <section class="stat-cards-grid">
+        <div class="stat-card">
+          <span class="stat-card-title">Total feedback records</span>
+          <div class="stat-card-value">203</div>
+          <span class="stat-card-subtext">Google Play Store, Reddit, Google Forms, etc.</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-title">Customer themes</span>
+          <div class="stat-card-value">9</div>
+          <div><span class="stat-card-pill">8 actionable themes, 1 unclassified</span></div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-title">Stated pause</span>
+          <div class="stat-card-value">8</div>
+          <span class="stat-card-subtext">26 self-reported</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-title">Stated stop</span>
+          <div class="stat-card-value">8</div>
+          <span class="stat-card-subtext">26 self-reported</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-title">Stated continue</span>
+          <div class="stat-card-value">7</div>
+          <span class="stat-card-subtext">26 self-reported</span>
+        </div>
+      </section>
+
+      <!-- Footnote for Reduce -->
+      <div class="stat-footnote">3 further records state reduce</div>
+
+      <!-- Customer Feedback Themes Bar Chart -->
+      <section id="themes" class="dashboard-card">
+        <div class="card-header-row">
+          <div class="card-heading-group">
+            <h2 class="card-title">Customer feedback themes</h2>
+            <p class="card-subtext">203 feedback items distributed across customer retention themes</p>
+          </div>
+          <span class="card-header-action">VIEW ALL TRENDS</span>
+        </div>
+        <div id="themeBarsList" class="theme-bars-list">
+          <!-- Dynamically populated from corpus.json -->
+        </div>
+      </section>
+
+      <!-- Where Retention Breaks (Journey Stages) -->
+      <section id="journey" class="dashboard-card">
+        <div class="card-header-row">
+          <div class="card-heading-group">
+            <h2 class="card-title">Where Retention Breaks</h2>
+            <p class="card-subtext">Theme-to-stage mapping in user journey order. Stage-by-stage progression of friction across the user lifecycle.</p>
+          </div>
+        </div>
+        <div id="journeyStagesGrid" class="journey-stages-grid">
+          <!-- Dynamically populated from corpus.json -->
+        </div>
+      </section>
+
+      <!-- Opportunity Ranking Table -->
+      <section id="opportunities" class="dashboard-card">
+        <div class="card-header-row">
+          <div class="card-heading-group">
+            <h2 class="card-title">Opportunity ranking</h2>
+            <p class="card-subtext">0.25 freq + 0.35 churn link + 0.20 severity + 0.20 fixability, times 10</p>
+          </div>
+          <span class="card-header-action">EXPORT MATRIX</span>
+        </div>
+        
+        <div class="table-scroll-container">
+          <table class="opportunity-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Theme</th>
+                <th>Freq</th>
+                <th>Churn Link</th>
+                <th>Severity</th>
+                <th>Fixability</th>
+                <th>Score</th>
+                <th>Sample Confidence</th>
+              </tr>
+            </thead>
+            <tbody id="opportunityTableBody">
+              <!-- Dynamically populated from corpus.json -->
+            </tbody>
+          </table>
+        </div>
+        <div class="table-footnote">Deliberate Pausing and SIP Continuation are not benchmarked, and scored separately in the descriptive module.</div>
+      </section>
+
+      <!-- Methodology & Study Limitations -->
+      <section id="methodology" class="dashboard-card">
+        <div class="card-header-row">
+          <div class="card-heading-group">
+            <h2 class="card-title">Methodology & Study Limitations</h2>
+            <p class="card-subtext">This analytical discovery synthesis is an observational initial cohort to detect drop-off friction across first-time retail investor pipelines.</p>
+          </div>
+          <span class="card-header-action">RESEARCH INTEGRITY & SCOPE</span>
+        </div>
+        <div id="limitationsGrid" class="limitations-grid">
+          <!-- Dynamically populated from corpus.json -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Right Persistent Panel: Ask SIP Feedback Corpus -->
+    <aside id="rightPanel" class="right-panel">
+      <div class="ask-panel-header">
+        <div class="ask-header-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <div class="ask-header-text">
+          <span class="ask-header-title">Ask SIP Feedback Corpus</span>
+          <span class="ask-header-subtitle">Search the real customer feedback</span>
+        </div>
+        <button id="mobilePanelClose" class="mobile-panel-close" aria-label="Close panel">&times;</button>
+      </div>
+
+      <div class="ask-panel-body">
+        
+        <!-- Input section -->
+        <div class="ask-input-group">
+          <label class="ask-input-label" for="chatQueryInput">Ask Inquiry</label>
+          <div class="query-input-wrapper">
+            <input 
+              type="text" 
+              id="chatQueryInput" 
+              class="chat-query-input" 
+              placeholder="Why do investors pause or stop their SIPs?" 
+              value="Why do investors pause or stop their SIPs?"
+            />
+            <button id="btnAskSubmit" class="btn-ask-submit">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              Ask
+            </button>
+          </div>
+        </div>
+
+        <!-- Suggested Questions -->
+        <div class="suggestions-group">
+          <div class="suggestions-title">Suggestions / Frequent</div>
+          <div class="suggestion-chips-list" id="suggestionsChipList">
+            <button class="question-chip">Why do investors pause or stop their SIPs?</button>
+            <button class="question-chip">What are the friction points in bank payment mandates?</button>
+            <button class="question-chip">What confusion exists around exit loads and charges in SIPs?</button>
+            <button class="question-chip">What problems do investors report with Groww?</button>
+            <button class="question-chip">What motivates investors to continue their SIPs?</button>
+            <button class="question-chip">What improvements or missing features are asked for?</button>
+            <button class="question-chip question-chip-extra" hidden>What do investors say about failed or bounced autopay payments?</button>
+            <button class="question-chip question-chip-extra" hidden>What do investors say about withdrawals and redemptions?</button>
+            <button class="question-chip question-chip-extra" hidden>How do investors describe customer support experiences?</button>
+            <button class="question-chip question-chip-extra" hidden>Why do investors say they switch to other platforms?</button>
+            <button class="question-chip question-chip-extra" hidden>What do investors say about changing or modifying their SIP?</button>
+            <button class="question-chip question-chip-extra" hidden>What do investors say about KYC and account verification problems?</button>
+            <button class="question-chip question-chip-extra" hidden>What do investors say about fees, charges and deductions?</button>
+            <button class="question-chip question-chip-extra" hidden>What do investors say about fluctuating returns and market dips?</button>
+          </div>
+          <button class="show-more-toggle" id="showMoreToggle">Show more questions ▾</button>
+        </div>
+
+        <!-- Dynamic Answer Container -->
+        <div id="chatResponseContainer">
+          <div class="chat-response-card" style="text-align: center; color: var(--text-muted); font-size: 12.5px; padding: 24px 12px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--groww-primary)" stroke-width="2" style="margin: 0 auto 8px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <div>Submit an inquiry above or select a frequent question to retrieve authentic grounded customer feedback.</div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Mobile Floating Trigger -->
+  <button id="mobileFabAsk" class="mobile-fab-ask">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    Ask Corpus
+  </button>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,11 @@
+{
+  "name": "groww-sip-retention-discovery",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/local_server.js",
+    "test": "node --test web/test/test_chat_api.test.js",
+    "test:node": "node --test web/test/test_chat_api.test.js",
+    "export-data": "python scripts/export_dashboard_data.py"
+  }
+}
