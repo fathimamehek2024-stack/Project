@@ -30,8 +30,7 @@ import handler, {
   tokenizeText,
 } from '../api/chat.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const TEST_DIR = fileURLToPath(new URL('.', import.meta.url));
 
 describe('Groww SIP Retention Chat API & Retrieval Engine', () => {
   let corpus;
@@ -110,7 +109,7 @@ describe('Groww SIP Retention Chat API & Retrieval Engine', () => {
     assert.ok(offlineAns.what_customers_said.includes('contains zero records on F&O'));
   });
 
-  test('6. Missing GROQ_API_KEY returns offline retrieval with exact badge text', async () => {
+  test('6. Missing GROQ_API_KEY returns offline retrieval with exact badge text and fallback_reason', async () => {
     const res = await generateChatResponse('Why do investors pause their SIPs?', {
       corpus,
       apiKey: '',
@@ -119,6 +118,7 @@ describe('Groww SIP Retention Chat API & Retrieval Engine', () => {
     assert.equal(res.mode, 'offline');
     assert.equal(res.badge, BADGE_OFFLINE);
     assert.equal(res.badge, 'GROUNDED IN CORPUS - OFFLINE RETRIEVAL (no live AI)');
+    assert.equal(res.fallback_reason, 'no key set');
     assert.equal(res.records_retrieved, 5);
     assert.ok(res.answer.what_customers_said.length > 0);
     assert.ok(res.answer.interpretation.length > 0);
@@ -136,6 +136,8 @@ describe('Groww SIP Retention Chat API & Retrieval Engine', () => {
     assert.equal(res.badge, BADGE_OFFLINE);
     assert.equal(res.badge, 'GROUNDED IN CORPUS - OFFLINE RETRIEVAL (no live AI)');
     assert.ok(res.records_retrieved > 0);
+    assert.ok(res.fallback_reason, 'Must return a fallback_reason');
+    assert.ok(!res.fallback_reason.includes('gsk_'), 'Fallback reason must never expose the API key');
   });
 
   test('8. Prompt privacy: zero developer-reply text in prompts sent to Groq', () => {
@@ -235,7 +237,7 @@ describe('Groww SIP Retention Chat API & Retrieval Engine', () => {
   });
 
   test('11. No suggested question in index.html starts with a digit', () => {
-    const htmlPath = path.resolve(__dirname, '..', 'index.html');
+    const htmlPath = path.resolve(TEST_DIR, '..', 'index.html');
     const html = fs.readFileSync(htmlPath, 'utf-8');
     // Extract every question-chip button's text content
     const chipRegex = /<button[^>]*class="[^"]*question-chip[^"]*"[^>]*>(.*?)<\/button>/g;
@@ -340,5 +342,30 @@ describe('Groww SIP Retention Chat API & Retrieval Engine', () => {
     const res = await generateChatResponse('Can I trade crypto bitcoin and F&O futures?');
     assert.equal(res.is_out_of_corpus, true);
     assert.ok(res.answer.what_customers_said.includes('outside the mutual fund SIP discovery corpus'));
+  });
+
+  test('18. Fallback reason never contains the API key under any error condition', async () => {
+    const fakeKey = 'gsk_secret_token_123456789_xyz';
+    const testCases = [
+      { apiKey: '', expected: 'no key set' },
+      { apiKey: fakeKey, model: '', expected: 'model name not set' },
+      { apiKey: fakeKey, model: 'openai/gpt-oss-120b', timeoutMs: 500 },
+    ];
+
+    for (const tc of testCases) {
+      const res = await generateChatResponse('What do investors say about autopay failures?', {
+        corpus,
+        ...tc,
+      });
+      assert.equal(res.mode, 'offline');
+      assert.ok(res.fallback_reason, 'Must provide a fallback reason');
+      assert.ok(
+        !res.fallback_reason.includes(fakeKey) && !res.fallback_reason.includes('gsk_'),
+        `Fallback reason "${res.fallback_reason}" must not contain API key`
+      );
+      if (tc.expected) {
+        assert.equal(res.fallback_reason, tc.expected);
+      }
+    }
   });
 });

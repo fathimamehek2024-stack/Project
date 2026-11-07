@@ -429,10 +429,15 @@ function renderChatAnswer(data) {
     `;
   }
 
-  // Footer line with mode badge and caveat
+  // Footer line with mode badge, optional fallback reason, and caveat
+  const fallbackReasonHtml = (!isLive && data.fallback_reason) ? `
+    <span class="chat-fallback-reason">${escapeHtml(data.fallback_reason)}</span>
+  ` : '';
+
   const footerHtml = `
     <div class="chat-answer-footer">
       <span class="${badgeClass}">${badgeText}</span>
+      ${fallbackReasonHtml}
       <span class="answer-caveat-text">Theme labels come from a rule-based classifier validated on 20 records.</span>
     </div>
   `;
@@ -468,6 +473,7 @@ function executeClientSideFallback(query) {
       badge: BADGE_OFFLINE,
       query,
       records_retrieved: 0,
+      fallback_reason: 'out of corpus query',
       records: [],
       answer: {
         what_customers_said: `The query "${query}" asks about derivatives or assets outside the mutual fund SIP discovery corpus. The engine contains 203 mutual fund and platform records and zero F&O or crypto data.`,
@@ -500,6 +506,7 @@ function executeClientSideFallback(query) {
       badge: BADGE_OFFLINE,
       query,
       records_retrieved: 0,
+      fallback_reason: 'out of corpus query',
       records: [],
       answer: {
         what_customers_said: `Insufficient evidence: No mutual fund feedback records closely match "${query}".`,
@@ -513,6 +520,7 @@ function executeClientSideFallback(query) {
   return {
     mode: 'offline',
     badge: BADGE_OFFLINE,
+    fallback_reason: 'no key set (client-side fallback)',
     query,
     records_retrieved: top.length,
     records: top,

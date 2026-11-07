@@ -1129,4 +1129,12 @@ body {
   line-height: 1.3;
 }
 
+.chat-fallback-reason {
+  font-size: 11px;
+  color: #64748b;
+  font-style: italic;
+  margin-top: -2px;
+}
+
+
 

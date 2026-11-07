@@ -17,15 +17,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 // Helper to load .env variables if not already set in process.env
 function ensureEnvLoaded() {
   if (process.env.GROQ_API_KEY && (process.env.GROQ_MODEL || process.env.LLM_MODEL)) {
     return;
   }
-  const rootEnvPath = path.resolve(__dirname, '../../.env');
+  const rootEnvPath = path.resolve(fileURLToPath(new URL('../../.env', import.meta.url)));
   if (fs.existsSync(rootEnvPath)) {
     try {
       const content = fs.readFileSync(rootEnvPath, 'utf8');
@@ -125,7 +122,7 @@ export function loadCorpusData() {
   if (cachedCorpus) return cachedCorpus;
 
   const candidatePaths = [
-    path.resolve(__dirname, '../data/corpus.json'),
+    fileURLToPath(new URL('../data/corpus.json', import.meta.url)),
     path.resolve(process.cwd(), 'web/data/corpus.json'),
     path.resolve(process.cwd(), 'data/corpus.json'),
   ];
@@ -346,9 +343,17 @@ export async function queryGroq(apiKey, model, promptPayload, options = {}) {
     };
   } catch (err) {
     clearTimeout(timer);
+    let statusMatch = err.message && err.message.match(/HTTP (\d{3})/);
+    let fallbackMsg = 'API request failed';
+    if (err.name === 'AbortError' || err.message?.includes('timed out')) {
+      fallbackMsg = 'timeout';
+    } else if (statusMatch) {
+      fallbackMsg = `Groq returned HTTP ${statusMatch[1]}`;
+    }
     return {
       success: false,
-      error: err.name === 'AbortError' ? 'Groq API request timed out (10s)' : err.message,
+      error: fallbackMsg,
+      fallback_reason: fallbackMsg,
       model: modelToUse,
     };
   }
@@ -476,7 +481,7 @@ export function parseSections(rawText) {
 export async function generateChatResponse(query, options = {}) {
   const corpus = options.corpus || loadCorpusData();
   const apiKey = (options.apiKey !== undefined ? options.apiKey : process.env.GROQ_API_KEY) || '';
-  const model = options.model || process.env.GROQ_MODEL || process.env.LLM_MODEL || 'openai/gpt-oss-120b';
+  const model = options.model !== undefined ? options.model : (process.env.GROQ_MODEL || process.env.LLM_MODEL || 'openai/gpt-oss-120b');
 
   const retrievalResult = retrieveRelevantRecords(query, corpus, options);
 
@@ -486,6 +491,7 @@ export async function generateChatResponse(query, options = {}) {
     return {
       mode: 'offline',
       badge: BADGE_OFFLINE,
+      fallback_reason: retrievalResult.is_out_of_corpus ? 'out of corpus query' : 'low evidence in corpus',
       query: retrievalResult.query,
       records_retrieved: retrievalResult.records.length,
       records: retrievalResult.records,
@@ -496,47 +502,60 @@ export async function generateChatResponse(query, options = {}) {
     };
   }
 
+  // Determine fallback reason if going offline
+  let fallbackReason = options.fallback_reason || '';
+  if (!apiKey.trim()) {
+    fallbackReason = 'no key set';
+  } else if (!model || !model.trim()) {
+    fallbackReason = 'model name not set';
+  }
+
   // If GROQ_API_KEY is present, attempt live AI synthesis
   if (apiKey.trim()) {
-    const promptPayload = buildPrompt(query, retrievalResult.records);
-    const groqResult = await queryGroq(apiKey, model, promptPayload, options);
-
-    if (groqResult.success) {
-      let cards = null;
-      // Try parsing JSON cards if present in response or content
-      try {
-        const jsonMatch = groqResult.content.match(/```json\s*([\s\S]*?)\s*```/) || groqResult.content.match(/(\[\s*\{[\s\S]*\}\s*\])/);
-        if (jsonMatch) {
-          const parsedCards = JSON.parse(jsonMatch[1]);
-          const retrievedIds = retrievalResult.records.map(r => r.feedback_id);
-          if (validateCards(parsedCards, retrievedIds)) {
-            cards = parsedCards;
-          }
-        }
-      } catch (e) {
-        cards = null;
-      }
-
-      if (!cards) {
-        cards = buildOfflineCards(retrievalResult.records);
-      }
-
-      const parsed = parseSections(groqResult.content);
-      parsed.cards = cards;
-
-      return {
-        mode: 'live',
-        badge: BADGE_LIVE,
-        query: retrievalResult.query,
-        records_retrieved: retrievalResult.records.length,
-        records: retrievalResult.records,
-        answer: parsed,
-        is_low_evidence: false,
-        is_out_of_corpus: false,
-        model_used: groqResult.model,
-      };
+    if (!model || !model.trim()) {
+      fallbackReason = 'model name not set';
     } else {
-      console.warn('Groq call failed, falling back to offline retrieval:', groqResult.error);
+      const promptPayload = buildPrompt(query, retrievalResult.records);
+      const groqResult = await queryGroq(apiKey, model, promptPayload, options);
+
+      if (groqResult.success) {
+        let cards = null;
+        // Try parsing JSON cards if present in response or content
+        try {
+          const jsonMatch = groqResult.content.match(/```json\s*([\s\S]*?)\s*```/) || groqResult.content.match(/(\[\s*\{[\s\S]*\}\s*\])/);
+          if (jsonMatch) {
+            const parsedCards = JSON.parse(jsonMatch[1]);
+            const retrievedIds = retrievalResult.records.map(r => r.feedback_id);
+            if (validateCards(parsedCards, retrievedIds)) {
+              cards = parsedCards;
+            }
+          }
+        } catch (e) {
+          cards = null;
+        }
+
+        if (!cards) {
+          cards = buildOfflineCards(retrievalResult.records);
+        }
+
+        const parsed = parseSections(groqResult.content);
+        parsed.cards = cards;
+
+        return {
+          mode: 'live',
+          badge: BADGE_LIVE,
+          query: retrievalResult.query,
+          records_retrieved: retrievalResult.records.length,
+          records: retrievalResult.records,
+          answer: parsed,
+          is_low_evidence: false,
+          is_out_of_corpus: false,
+          model_used: groqResult.model,
+        };
+      } else {
+        fallbackReason = groqResult.fallback_reason || groqResult.error || 'Groq call failed';
+        console.warn('Groq call failed, falling back to offline retrieval:', fallbackReason);
+      }
     }
   }
 
@@ -546,6 +565,7 @@ export async function generateChatResponse(query, options = {}) {
   return {
     mode: 'offline',
     badge: BADGE_OFFLINE,
+    fallback_reason: fallbackReason,
     query: retrievalResult.query,
     records_retrieved: retrievalResult.records.length,
     records: retrievalResult.records,

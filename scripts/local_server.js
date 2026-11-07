@@ -14,9 +14,7 @@ import { fileURLToPath } from 'node:url';
 
 import handler from '../web/api/chat.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const WEB_DIR = path.resolve(__dirname, '../web');
+const WEB_DIR = fileURLToPath(new URL('../web', import.meta.url));
 
 const PORT = process.env.PORT || 3000;
 
