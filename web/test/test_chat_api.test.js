@@ -368,4 +368,12 @@ describe('Groww SIP Retention Chat API & Retrieval Engine', () => {
       }
     }
   });
+
+  test('19. Gracefully falls back to offline mode when corpus is unavailable without throwing', async () => {
+    const res = await generateChatResponse('Why do investors pause their SIP?', { corpus: null });
+    assert.equal(res.mode, 'offline');
+    assert.equal(res.badge, BADGE_OFFLINE);
+    assert.equal(res.fallback_reason, 'corpus.json not found or unreadable');
+    assert.equal(res.records_retrieved, 0);
+  });
 });

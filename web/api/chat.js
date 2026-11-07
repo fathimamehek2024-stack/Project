@@ -139,7 +139,7 @@ export function loadCorpusData() {
     }
   }
 
-  throw new Error('Could not find web/data/corpus.json. Please run scripts/export_dashboard_data.py first.');
+  return null;
 }
 
 /**
@@ -479,7 +479,28 @@ export function parseSections(rawText) {
  * End-to-end chat response coordinator.
  */
 export async function generateChatResponse(query, options = {}) {
-  const corpus = options.corpus || loadCorpusData();
+  const corpus = options.corpus !== undefined ? options.corpus : loadCorpusData();
+
+  if (!corpus || !Array.isArray(corpus.records)) {
+    return {
+      mode: 'offline',
+      badge: BADGE_OFFLINE,
+      fallback_reason: 'corpus.json not found or unreadable',
+      query: (query || '').trim(),
+      records_retrieved: 0,
+      records: [],
+      answer: {
+        what_customers_said: 'Corpus data is currently unavailable on the server.',
+        interpretation: 'Unable to perform grounded retrieval because web/data/corpus.json could not be loaded.',
+        full_text: 'Corpus data unavailable.',
+        cards: [],
+      },
+      is_low_evidence: true,
+      is_out_of_corpus: false,
+      model_used: 'none (offline-retrieval)',
+    };
+  }
+
   const apiKey = (options.apiKey !== undefined ? options.apiKey : process.env.GROQ_API_KEY) || '';
   const model = options.model !== undefined ? options.model : (process.env.GROQ_MODEL || process.env.LLM_MODEL || 'openai/gpt-oss-120b');
 
